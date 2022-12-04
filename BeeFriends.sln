@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeeFriends", "BeeFriends\BeeFriends.csproj", "{68E6C3BF-FC4D-4426-B0D0-C6A69CC5C4EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68E6C3BF-FC4D-4426-B0D0-C6A69CC5C4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E6C3BF-FC4D-4426-B0D0-C6A69CC5C4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E6C3BF-FC4D-4426-B0D0-C6A69CC5C4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E6C3BF-FC4D-4426-B0D0-C6A69CC5C4EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {513AFE19-C0C5-4BB5-BF0C-A9D51B39C4E7}
+	EndGlobalSection
+EndGlobal

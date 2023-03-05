@@ -9,9 +9,8 @@ namespace BeeFriends.Context
         {
 
         }
-        public DbSet<User> Users { get; set; }
-        public DbSet<ChatRoom> ChatRooms { get; set; }
-        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Room> Rooms { get; set; }
         
     }
 }

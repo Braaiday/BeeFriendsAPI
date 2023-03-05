@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("https://beefriends-py31.onrender.com")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();

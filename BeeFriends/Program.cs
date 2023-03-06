@@ -24,7 +24,7 @@ builder.Services.AddSignalR(e => {
     e.MaximumReceiveMessageSize = 102400000;
 });
 
-
+var frontendurl = builder.Configuration.GetConnectionString("WEBURL");
 // Cors
 
 // Cors Options
@@ -33,9 +33,10 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     {
         builder
-        .AllowAnyOrigin()
+        .WithOrigins(frontendurl)
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 

@@ -24,7 +24,7 @@ builder.Services.AddSignalR(e => {
     e.MaximumReceiveMessageSize = 102400000;
 });
 
-var frontendurl = builder.Configuration.GetConnectionString("WEBURL");
+var frontendurl = builder.Configuration.GetConnectionString("WebUrl");
 // Cors
 
 // Cors Options

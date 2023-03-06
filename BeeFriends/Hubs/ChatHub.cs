@@ -54,6 +54,14 @@ namespace BeeFriends.Hubs
             }
         }
 
+        public async Task UserStopedTyping()
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            {
+                await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, "");
+            }
+        }
+
         public Task SendUsersConnected(string room)
         {
             var users = _connections.Values

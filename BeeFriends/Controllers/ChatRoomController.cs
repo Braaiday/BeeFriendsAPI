@@ -21,6 +21,7 @@ namespace BeeFriends.Controllers
         [Route("api/ChatRoom")]
         public async Task<List<Room>> GetAllChatRooms()
         {
+            var rooms = _context.Rooms.ToListAsync();
             return await _context.Rooms.ToListAsync();
         }
         [HttpPost]
@@ -35,6 +36,12 @@ namespace BeeFriends.Controllers
             await _context.Rooms.AddAsync(new Room { name = room.name });
             await _context.SaveChangesAsync();
             return await _context.Rooms.FirstOrDefaultAsync(r => r.name == room.name);
+        }
+        [HttpPost]
+        [Route("api/GetChatHistory")]
+        public async Task<List<Message>> GetChatHistory(Room room)
+        {
+            return await _context.Messages.Where(m => m.RoomId == room.Id).ToListAsync();
         }
     }
 }

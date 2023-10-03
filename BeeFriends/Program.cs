@@ -25,13 +25,13 @@ builder.Services.AddSignalR(e => {
 });
 
 // Cors
-
 // Cors Options
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(cors =>
     {
-        builder.WithOrigins("https://beefriends-py31.onrender.com")
+        cors.WithOrigins(builder.Configuration.GetSection("AllowedOrigin").Value)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();

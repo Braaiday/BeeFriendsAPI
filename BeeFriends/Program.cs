@@ -16,7 +16,7 @@ builder.Services.AddDbContext<AppDBContext>(options => options.UseInMemoryDataba
 
 // In memory dictionary thingy
 
-builder.Services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
+builder.Services.AddSingleton<List<UserConnection>>(opts => new List<UserConnection>());
 
 // Singal R
 

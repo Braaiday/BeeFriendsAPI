@@ -9,10 +9,10 @@ namespace BeeFriends.Hubs
     public class ChatHub : Hub
     {
         private readonly string _botUser;
-        private readonly IDictionary<string, UserConnection> _connections;
+        private readonly List<UserConnection> _connections;
         private readonly AppDBContext _context;
 
-        public ChatHub(IDictionary<string, UserConnection> connections, AppDBContext context)
+        public ChatHub(List<UserConnection> connections, AppDBContext context)
         {
             _context = context;
             _botUser = "MyChat Bot";
@@ -28,15 +28,17 @@ namespace BeeFriends.Hubs
                 RoomId = room.Id,
                 User = userConnection.User,
             };
-          await _context.Messages.AddAsync(newMessage);
-          await _context.SaveChangesAsync();
+            await _context.Messages.AddAsync(newMessage);
+            await _context.SaveChangesAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            if (userConnection != null)
             {
-                _connections.Remove(Context.ConnectionId);
+                _connections.Remove(userConnection);
                 Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has left");
                 SendUsersConnected(userConnection.Room);
                 SaveMessage(userConnection, $"{userConnection.User} has left");
@@ -48,8 +50,8 @@ namespace BeeFriends.Hubs
         public async Task JoinRoom(UserConnection userConnection)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
-
-            _connections[Context.ConnectionId] = userConnection;
+            userConnection.ConnectionId = Context.ConnectionId;
+            _connections.Add(userConnection);
 
             await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room}");
 
@@ -60,7 +62,9 @@ namespace BeeFriends.Hubs
 
         public async Task SendMessage(string message)
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            if (userConnection != null)
             {
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, message);
                 SaveMessage(userConnection, message);
@@ -69,25 +73,28 @@ namespace BeeFriends.Hubs
 
         public async Task IsTypingMessage()
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            if (userConnection != null)
             {
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, userConnection.User + " is typing");
             }
         }
 
-        public async Task UserStopedTyping()
+        public async Task UserStoppedTyping()
         {
-            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            if (userConnection != null)
             {
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, "");
+
             }
         }
 
         public Task SendUsersConnected(string room)
         {
-            var users = _connections.Values
-                .Where(c => c.Room == room)
-                .Select(c => c.User);
+            var users = _connections.Where(c => c.Room == room).Select(c => c.User).ToList();
 
             return Clients.Group(room).SendAsync("UsersInRoom", users);
         }

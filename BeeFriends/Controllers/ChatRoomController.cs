@@ -26,16 +26,16 @@ namespace BeeFriends.Controllers
         }
         [HttpPost]
         [Route("api/CreateChatRoom")]
-        public async Task<Room> CreateChatRoom(Room room)
+        public async Task<IActionResult> CreateChatRoom(Room room)
         {
             var roomNameTaken = _context.Rooms.Where(r => r.name == room.name).FirstOrDefault();
             if (roomNameTaken != null)
             {
-                return null;
+                return BadRequest("Room already exists.");
             }
             await _context.Rooms.AddAsync(new Room { name = room.name });
             await _context.SaveChangesAsync();
-            return await _context.Rooms.FirstOrDefaultAsync(r => r.name == room.name);
+            return Ok(await _context.Rooms.FirstOrDefaultAsync(r => r.name == room.name));
         }
         [HttpPost]
         [Route("api/GetChatHistory")]

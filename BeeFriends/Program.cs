@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDBContext>(options => options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("BeeFriendsDB")));
 
-// In memory dictionary thingy
+// In memory list, look to use db instead
 
 builder.Services.AddSingleton<List<UserConnection>>(opts => new List<UserConnection>());
 

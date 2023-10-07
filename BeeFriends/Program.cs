@@ -49,6 +49,7 @@ app.UseCors();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<ChatHub>("/chat");
+    endpoints.MapHub<LobbyHub>("/lobby");
 });
 
 app.UseAuthorization();

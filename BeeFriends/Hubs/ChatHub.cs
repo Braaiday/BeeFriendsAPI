@@ -9,14 +9,12 @@ namespace BeeFriends.Hubs
     public class ChatHub : Hub
     {
         private readonly string _botUser;
-        private readonly List<UserConnection> _connections;
         private readonly AppDBContext _context;
 
-        public ChatHub(List<UserConnection> connections, AppDBContext context)
+        public ChatHub(AppDBContext context)
         {
             _context = context;
             _botUser = "MyChat Bot";
-            _connections = connections;
         }
 
         public async void SaveMessage(UserConnection userConnection, string message)
@@ -34,11 +32,11 @@ namespace BeeFriends.Hubs
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var userConnection = _context.UserConnections.FirstOrDefault(x => x.Id == Context.ConnectionId);
 
             if (userConnection != null)
             {
-                _connections.Remove(userConnection);
+                _context.UserConnections.Remove(userConnection);
                 Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has left");
                 SendUsersConnected(userConnection.Room);
                 SaveMessage(userConnection, $"{userConnection.User} has left");
@@ -50,8 +48,8 @@ namespace BeeFriends.Hubs
         public async Task JoinRoom(UserConnection userConnection)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
-            userConnection.ConnectionId = Context.ConnectionId;
-            _connections.Add(userConnection);
+            userConnection.Id = Context.ConnectionId;
+            _context.UserConnections.Add(userConnection);
 
             await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room}");
 
@@ -62,7 +60,7 @@ namespace BeeFriends.Hubs
 
         public async Task SendMessage(string message)
         {
-            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var userConnection = _context.UserConnections.FirstOrDefault(x => x.Id == Context.ConnectionId);
 
             if (userConnection != null)
             {
@@ -73,7 +71,7 @@ namespace BeeFriends.Hubs
 
         public async Task IsTypingMessage()
         {
-            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var userConnection = _context.UserConnections.FirstOrDefault(x => x.Id == Context.ConnectionId);
 
             if (userConnection != null)
             {
@@ -83,7 +81,7 @@ namespace BeeFriends.Hubs
 
         public async Task UserStoppedTyping()
         {
-            var userConnection = _connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var userConnection = _context.UserConnections.FirstOrDefault(x => x.Id == Context.ConnectionId);
 
             if (userConnection != null)
             {
@@ -94,7 +92,7 @@ namespace BeeFriends.Hubs
 
         public Task SendUsersConnected(string room)
         {
-            var users = _connections.Where(c => c.Room == room).Select(c => c.User).ToList();
+            var users = _context.UserConnections.Where(c => c.Room == room).Select(c => c.User).ToList();
 
             return Clients.Group(room).SendAsync("UsersInRoom", users);
         }

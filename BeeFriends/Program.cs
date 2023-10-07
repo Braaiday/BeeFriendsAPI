@@ -5,28 +5,20 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // In memory databse
-
 builder.Services.AddDbContext<AppDBContext>(options => options.UseInMemoryDatabase(builder.Configuration.GetConnectionString("BeeFriendsDB")));
 
-// In memory list, look to use db instead
-
-builder.Services.AddSingleton<List<UserConnection>>(opts => new List<UserConnection>());
-
 // Singal R
-
 builder.Services.AddSignalR(e => {
     e.MaximumReceiveMessageSize = 102400000;
 });
 
 // Cors
 // Cors Options
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(cors =>

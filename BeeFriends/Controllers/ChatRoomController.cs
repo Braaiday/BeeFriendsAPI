@@ -28,7 +28,7 @@ namespace BeeFriends.Controllers
         [Route("api/CreateChatRoom")]
         public async Task<IActionResult> CreateChatRoom(Room room)
         {
-            var roomNameTaken = _context.Rooms.Where(r => r.name == room.name).FirstOrDefault();
+             var roomNameTaken = _context.Rooms.Where(r => r.name == room.name).FirstOrDefault();
             if (roomNameTaken != null)
             {
                 return BadRequest("Room already exists.");

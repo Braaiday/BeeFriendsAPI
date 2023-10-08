@@ -33,10 +33,11 @@ namespace BeeFriends.Hubs
         public async void SaveMessageBot(UserConnection userConnection, string message)
         {
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.name == userConnection.Room);
+            if (room == null) { return; }
             var newMessage = new Message
             {
                 UserMessage = message,
-                RoomId = room.Id,
+                RoomId = room?.Id,
                 User = _botUser,
             };
             await _context.Messages.AddAsync(newMessage);

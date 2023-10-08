@@ -19,9 +19,10 @@ namespace BeeFriends.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
             userConnection.Id = Context.ConnectionId;
             _context.UserConnections.Add(userConnection);
-
+            await _context.SaveChangesAsync();
             var rooms = _context.Rooms.ToList();
             Clients.Group(userConnection.Room).SendAsync("ActiveRooms", rooms);
+            await SendUsersConnected(userConnection.Room);
         }
 
         public async Task NewRoomCreated()
@@ -37,9 +38,18 @@ namespace BeeFriends.Hubs
             if (userConnection != null)
             {
                 _context.UserConnections.Remove(userConnection);
+                _context.SaveChanges();
+                SendUsersConnected(userConnection.Room);
             }
 
             return base.OnDisconnectedAsync(exception);
+        }
+        public Task SendUsersConnected(string room)
+        {
+            var test = _context.UserConnections.ToList();
+            var users = _context.UserConnections.Where(c => c.Room == room).Select(c => c.User).ToList();
+
+            return Clients.Group(room).SendAsync("UsersInRoom", users);
         }
     }
 }

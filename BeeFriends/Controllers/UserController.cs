@@ -9,7 +9,7 @@ namespace BeeFriends.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMemoryCache _memoryCache;
-
+        private readonly string _botUser = "MyChat Bot";
         public UserController(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
@@ -17,8 +17,11 @@ namespace BeeFriends.Controllers
 
         [HttpPost]
         [Route("api/SaveUsername")]
-        public async Task<IActionResult> SaveUsername(string username)
+        public async Task<IActionResult> SaveUsername([FromBody] string username)
         {
+            // Restrict usernames with the same name as the bot
+            if (username == _botUser) return BadRequest("Username has been taken.");
+
             // Check if the cache already contains a list of usernames
             if (!_memoryCache.TryGetValue("UsernamesList", out List<string> cachedUsernames))
             {

@@ -17,7 +17,7 @@ namespace BeeFriends.Hubs
             _botUser = "MyChat Bot";
         }
 
-        public async void SaveMessage(UserConnection userConnection, string message)
+        public async void SaveMessageUser(UserConnection userConnection, string message)
         {
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.name == userConnection.Room);
             var newMessage = new Message
@@ -25,6 +25,19 @@ namespace BeeFriends.Hubs
                 UserMessage = message,
                 RoomId = room.Id,
                 User = userConnection.User,
+            };
+            await _context.Messages.AddAsync(newMessage);
+            await _context.SaveChangesAsync();
+        }
+
+        public async void SaveMessageBot(UserConnection userConnection, string message)
+        {
+            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.name == userConnection.Room);
+            var newMessage = new Message
+            {
+                UserMessage = message,
+                RoomId = room.Id,
+                User = _botUser,
             };
             await _context.Messages.AddAsync(newMessage);
             await _context.SaveChangesAsync();
@@ -39,7 +52,7 @@ namespace BeeFriends.Hubs
                 _context.UserConnections.Remove(userConnection);
                 Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has left");
                 SendUsersConnected(userConnection.Room);
-                SaveMessage(userConnection, $"{userConnection.User} has left");
+                SaveMessageBot(userConnection, $"{userConnection.User} has left");
             }
 
             return base.OnDisconnectedAsync(exception);
@@ -53,7 +66,7 @@ namespace BeeFriends.Hubs
 
             await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room}");
 
-            SaveMessage(userConnection, $"{userConnection.User} has joined {userConnection.Room}");
+            SaveMessageBot(userConnection, $"{userConnection.User} has joined {userConnection.Room}");
 
             await SendUsersConnected(userConnection.Room);
         }
@@ -65,7 +78,7 @@ namespace BeeFriends.Hubs
             if (userConnection != null)
             {
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, message);
-                SaveMessage(userConnection, message);
+                SaveMessageUser(userConnection, message);
             }
         }
 

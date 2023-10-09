@@ -106,7 +106,7 @@ namespace BeeFriends.Hubs
 
         public Task SendUsersConnected(string room)
         {
-            var users = _context.UserConnections.Where(c => c.Room == room).Select(c => c.User).ToList();
+            var users = _context.UserConnections.Where(c => c.Room == room).Select(c => c.User).Distinct().ToList();
 
             return Clients.Group(room).SendAsync("UsersInRoom", users);
         }

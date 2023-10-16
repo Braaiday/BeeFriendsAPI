@@ -89,7 +89,7 @@ namespace BeeFriends.Hubs
 
             if (userConnection != null)
             {
-                await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, userConnection.User + " is typing");
+                await Clients.Group(userConnection.Room).SendAsync("userIsTyping", userConnection.User, userConnection.User + " is typing");
             }
         }
 
@@ -99,7 +99,7 @@ namespace BeeFriends.Hubs
 
             if (userConnection != null)
             {
-                await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, "");
+                await Clients.Group(userConnection.Room).SendAsync("userStoppedTyping", userConnection.User, "");
 
             }
         }
